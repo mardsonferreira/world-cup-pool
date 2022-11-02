@@ -1,12 +1,9 @@
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
-import ShortUniqueId from "short-unique-id";
 
-const prisma = new PrismaClient({
-    log: ["query"],
-});
+import PoolController from "./controllers/PoolController";
+import UserController from "./controllers/UserController";
+import GuesController from "./controllers/GuessController";
 
 async function bootstrap() {
     const fastify = Fastify({
@@ -17,57 +14,15 @@ async function bootstrap() {
         origin: true,
     });
 
-    fastify.get("/pools/count", async () => {
-        const count = await prisma.pool.count();
+    // Pool routes
+    fastify.get("/pools/count", PoolController.count);
+    fastify.post("/pools", PoolController.save);
 
-        return {
-            count,
-        };
-    });
+    // User routes
+    fastify.get("/users/count", UserController.count);
 
-    fastify.get("/users/count", async () => {
-        const count = await prisma.user.count();
-
-        return {
-            count,
-        };
-    });
-
-    fastify.get("/guesses/count", async () => {
-        const count = await prisma.guess.count();
-
-        return {
-            count,
-        };
-    });
-
-    fastify.post("/pools", async (request, reply) => {
-        const createPoolBody = z.object({
-            title: z.string(),
-        });
-
-        try {
-            const { title } = createPoolBody.parse(request.body);
-
-            const generate = new ShortUniqueId({ length: 6 });
-            const code = String(generate()).toUpperCase();
-
-            await prisma.pool.create({
-                data: {
-                    title,
-                    code,
-                },
-            });
-
-            return reply.status(201).send({
-                code,
-            });
-        } catch (error) {
-            return reply.status(403).send({
-                message: "invalid data",
-            });
-        }
-    });
+    // Guess routes
+    fastify.get("/guesses/count", GuesController.count);
 
     await fastify.listen({
         port: 3333,
