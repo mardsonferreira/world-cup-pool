@@ -146,6 +146,47 @@ class PollController {
 
         return { polls };
     }
+
+    async getPoll(request: FastifyRequest, reply: FastifyReply) {
+        const getPollParams = z.object({
+            id: z.string(),
+        });
+
+        const { id } = getPollParams.parse(request.params);
+
+        const poll = await prisma.poll.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                _count: {
+                    select: {
+                        participants: true,
+                    },
+                },
+                participants: {
+                    select: {
+                        id: true,
+
+                        user: {
+                            select: {
+                                avatarUrl: true,
+                            },
+                        },
+                    },
+                    take: 4,
+                },
+                owner: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+
+        return { poll };
+    }
 }
 
 export default new PollController();

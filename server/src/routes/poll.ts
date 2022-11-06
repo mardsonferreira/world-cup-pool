@@ -16,8 +16,16 @@ export async function PoolRoutes(fastify: FastifyInstance) {
     fastify.post("/polls", PollController.createPoll);
 
     fastify.post(
-        "/polls/:id/join",
+        "/polls/join",
         { onRequest: [authenticate] },
         PollController.joinToPoll
+    );
+
+    fastify.get(
+        "/polls/:id",
+        {
+            onRequest: [authenticate],
+        },
+        PollController.getPoll
     );
 }
