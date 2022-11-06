@@ -7,6 +7,7 @@ import { useTheme } from "native-base";
 import { NewPoll } from "../pages/NewPoll";
 import { Polls } from "../pages/Polls";
 import { FindPoll } from "../pages/FindPoll";
+import { PollDetails } from "../pages/PollDetails";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -59,6 +60,12 @@ export function AppRoutes() {
             <Screen
                 name="find"
                 component={FindPoll}
+                options={{ tabBarButton: () => null }}
+            />
+
+            <Screen
+                name="details"
+                component={PollDetails}
                 options={{ tabBarButton: () => null }}
             />
         </Navigator>
