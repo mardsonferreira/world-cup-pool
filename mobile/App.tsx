@@ -9,9 +9,10 @@ import {
 import { AuthContextProvider } from "./src/context/AuthContext";
 
 import { Loading } from "./src/components/Loading";
-import { Pools } from "./src/pages/Pools";
+import { SignIn } from "./src/pages/SignIn";
 
 import { THEME } from "./src/styles/theme";
+
 
 export default function App() {
     let [fontsLoaded] = useFonts({
@@ -29,7 +30,7 @@ export default function App() {
                     translucent
                 />
 
-                {!fontsLoaded ? <Loading /> : <Pools />}
+                {!fontsLoaded ? <Loading /> : <SignIn />}
             </AuthContextProvider>
         </NativeBaseProvider>
     );

@@ -1,4 +1,4 @@
-import { prisma } from "../db";
+import { prisma } from "../lib/prisma";
 
 class GuessController {
     async count() {

@@ -1,9 +1,14 @@
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+import jwt from "@fastify/jwt";
 
-import PoolController from "./controllers/PoolController";
-import UserController from "./controllers/UserController";
-import GuesController from "./controllers/GuessController";
+import { PoolRoutes } from "./routes/poll";
+import { UserRoutes } from "./routes/user";
+import { GuessRoutes } from "./routes/guess";
+import { AuthRoutes } from "./routes/auth";
+import { GameRoutes } from "./routes/game";
+
+import { configs } from "./config/configuration";
 
 async function bootstrap() {
     const fastify = Fastify({
@@ -14,15 +19,15 @@ async function bootstrap() {
         origin: true,
     });
 
-    // Pool routes
-    fastify.get("/pools/count", PoolController.count);
-    fastify.post("/pools", PoolController.save);
+    await fastify.register(jwt, {
+        secret: configs.secretKey,
+    });
 
-    // User routes
-    fastify.get("/users/count", UserController.count);
-
-    // Guess routes
-    fastify.get("/guesses/count", GuesController.count);
+    await fastify.register(PoolRoutes);
+    await fastify.register(UserRoutes);
+    await fastify.register(GuessRoutes);
+    await fastify.register(AuthRoutes);
+    await fastify.register(GameRoutes);
 
     await fastify.listen({
         port: 3333,
